@@ -115,6 +115,86 @@ public class Main {
 
         binaryTreeLevelOrderTrasversal(root);
 
+        /*
+        LRU Cache
+
+        Enunciado
+
+        Diseña una estructura de datos que siga la política:
+
+        Least Recently Used (LRU)
+
+        La cache debe soportar:
+
+        LRUCache(int capacity)
+
+        Inicializa la cache con capacidad positiva.
+
+        int get(int key)
+        Retorna el valor de la llave si existe.
+        Si no existe, retorna -1.
+        Cuando una llave es usada, se convierte en:
+        most recently used
+        void put(int key, int value)
+        Inserta o actualiza el valor.
+        Si la cache excede la capacidad:
+        elimina el:
+        least recently used
+         */
+
+        LRUCache cache = new LRUCache(2);
+
+
+
+        /*
+
+        Merge Intervals
+
+        Enunciado
+
+        Dado un arreglo de intervalos:
+
+        intervals[i] = [start, end]
+
+        fusiona todos los intervalos que se superponen y retorna el arreglo resultante.
+
+        📌 Ejemplo 1
+        Input:
+        [[1,3],[2,6],[8,10],[15,18]]
+
+        Output:
+        [[1,6],[8,10],[15,18]]
+
+        Porque:
+
+        [1,3] y [2,6]
+
+        se superponen.
+
+        📌 Ejemplo 2
+        Input:
+        [[1,4],[4,5]]
+
+        Output:
+        [[1,5]]
+
+        Aquí:
+
+        4 toca 4
+
+        así que también se fusionan.
+         */
+
+        int[][] mergeIntervals = new int[][]{
+                {1,3},
+                {2,6},
+                {8,10},
+                {15,18}
+        };
+        System.out.println(Arrays.deepToString(mergeIntervals(mergeIntervals)));
+
+
+
     }
 
     static int longestSubstringWithoutRepeatingCharacters(String s){
@@ -207,6 +287,23 @@ public class Main {
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
 
+        while(!queue.isEmpty()){
+            int levelSize = queue.size();
+            List<Integer> currentLevel = new ArrayList<>();
+
+            for(int i = 0;i<levelSize;i++){
+                TreeNode current = queue.poll();
+                currentLevel.add(current.val);
+                if(current.left != null){
+                    queue.offer(current.left);
+                }
+                if (current.right != null){
+                    queue.offer(current.right);
+                }
+            }
+            result.add(currentLevel);
+        }
+
         return result;
     }
 
@@ -218,6 +315,49 @@ public class Main {
         TreeNode(int val){
             this.val = val;
         }
+    }
+
+    static class LRUCache extends LinkedHashMap<Integer,Integer>{
+        private final int capacity;
+
+        public LRUCache(int capacity){
+            super(capacity,0.75f,true);
+            this.capacity = capacity;
+        }
+
+        public int get(int key){
+            return super.getOrDefault(key,-1);
+        }
+
+        public void put(int key, int value){
+            super.put(key,value);
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Integer,Integer> eldest){
+            return size() > capacity;
+        }
+    }
+
+    static int [][] mergeIntervals(int[][] input){
+        Arrays.sort(input,(a,b) -> Integer.compare(a[0], b[0]));
+
+        List<int[]> result = new ArrayList<>();
+
+        int[] current = input[0];
+
+        for(int  i =1 ; i< input.length ; i++){
+            int[] next = input[i];
+
+            if(next[0]<= current[1]){
+                current[1] = Math.max(current[1], next[1]);
+            }else{
+                result.add(current);
+                current = next;
+            }
+        }
+        result.add(current);
+        return result.toArray(new int[result.size()][]);
     }
 
 }
